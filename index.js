@@ -29,20 +29,21 @@ client.once('ready', () => {
 
 // Event: When a message is created
 client.on('messageCreate', async (message) => {
-    // Ignore messages from bots
-    if (message.author.bot) return;
-
     // Check if the message is in the target channel
-    if (message.channel.id !== TARGET_CHANNEL_ID) return;
+    if (message.channel.id !== TARGET_CHANNEL_ID) {
+        return;
+    }
 
     // Check if there are any user mentions in the message
     if (message.mentions.users.size > 0) {
         message.mentions.users.forEach(async (user) => {
             try {
+                const embedsToSend = message.embeds.map((embed) => embed.toJSON());
                 // Send a DM to the mentioned user
-                await user.send(
-                    `Hello ${user.username}, you were mentioned by **${message.member.displayName}** in <#${message.channel.id}>:\n\n"${message.content}"`
-                );
+                await user.send({
+                    content: 'You were mentioned!',
+                    embeds: embedsToSend
+                });
 
                 console.log(`Sent DM to ${user.tag}`);
             } catch (error) {
